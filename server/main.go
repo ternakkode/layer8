@@ -51,7 +51,13 @@ func main() {
 
 	flag.Parse()
 
-	err := opentelemetry.NewMeter(context.Background())
+	// If the above code block runs, this section is never reached.
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	err = opentelemetry.NewMeter(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to create meter: %v", err)
 	}
@@ -76,12 +82,6 @@ func main() {
 		service := svc.NewService(repository)
 		fmt.Println("Running app with in-memory repository")
 		Server(*port, service, repository) // Run server
-	}
-
-	// If the above code block runs, this section is never reached.
-	err = godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
 	}
 
 	// If the user has set a database user or password, init the database
